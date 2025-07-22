@@ -49,4 +49,24 @@ export const useBoardStore = create((set) => ({
           : board
       ),
     })),
+    moveTask: (boardId, fromListId, toListId, taskId) =>
+  set((state) => {
+    const board = state.boards.find((b) => b.id === boardId);
+    if (!board) return state;
+
+    const fromList = board.lists.find((l) => l.id === fromListId);
+    const toList = board.lists.find((l) => l.id === toListId);
+    if (!fromList || !toList) return state;
+
+    const taskIndex = fromList.tasks.findIndex((t) => t.id === taskId);
+    if (taskIndex === -1) return state;
+
+    const [movedTask] = fromList.tasks.splice(taskIndex, 1);
+    toList.tasks.push(movedTask);
+
+    return {
+      boards: [...state.boards],
+    };
+  }),
+
 }));
