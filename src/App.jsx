@@ -1,17 +1,14 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import BoardsPage from "./pages/BoardsPage";
 import BoardPage from "./pages/BoardPage";
 
-function App() {
+export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<BoardsPage />} />
         <Route path="/board/:id" element={<BoardPage />} />
       </Routes>
     </Router>
   );
 }
-
-export default App;

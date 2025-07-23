@@ -1,22 +1,19 @@
-# React + Vite
+Ein Projektmanagement-Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ordnerstruktur:
+    /src
+    ┣ /components       # Wiederverwendbare UI-Elemente (z. B. Card, Modal)
+    ┣ /features         # Business-Logik wie Boards, Tasks, Comments
+    ┣ /pages            # Hauptansichten (Dashboard, Login etc.)
+    ┣ /hooks            # Eigene React Hooks
+    ┣ /store            # Zustand oder anderer State
+    ┣ /lib              # Hilfsfunktionen, z. B. localStorage oder API-Mocks
+    ┗ /App.jsx
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-
-/src
- ┣ /components       # Wiederverwendbare UI-Elemente (z. B. Card, Modal)
- ┣ /features         # Business-Logik wie Boards, Tasks, Comments
- ┣ /pages            # Hauptansichten (Dashboard, Login etc.)
- ┣ /hooks            # Eigene React Hooks
- ┣ /store            # Zustand oder anderer State
- ┣ /lib              # Hilfsfunktionen, z. B. localStorage oder API-Mocks
- ┗ /App.jsx
+Technologie-Stack:
+    JSFramework - Vite + React
+    CSSFramework - Tailwind CSS
+    Routing	- React Router
+        --State-Management - zustand (npm install zustand)--
+    Drag & Drop - @dnd-kit/core (npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities)
+    DatenBank - Supabase (https://supabase.com/, npm install @supabase/supabase-js)

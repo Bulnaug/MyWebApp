@@ -1,34 +1,106 @@
-import { DndContext, closestCenter } from '@dnd-kit/core';
-import { useParams } from 'react-router-dom';
-import { useBoardStore } from '../store/boardStore';
-import ListColumn from '../components/ListColumn';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import AddTask from "../components/AddTask";
 
 export default function BoardPage() {
-  const { id } = useParams();
-  const board = useBoardStore((state) => state.getBoardById(id));
-  const moveTask = useBoardStore((state) => state.moveTask);
+  const { id } = useParams(); // UUID aus URL
+  const [board, setBoard] = useState(null);
+  const [lists, setLists] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
+  // Boards + Listen laden
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      console.log("Board ID aus URL:", id);
 
-    if (!over || active.id === over.id) return;
+      // 🎯 1. Board laden
+      const { data, error } = await supabase
+        .from("boards")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle(); // gibt `null` zurück statt Fehler bei "kein Treffer"
 
-    const [taskId, fromListId] = active.id.split(':');
-    const [, toListId] = over.id.split(':');
+      if (error) {
+        console.error("❌ Fehler beim Laden des Boards:", error.message);
+        setLoading(false);
+        return;
+      }
 
-    moveTask(id, fromListId, toListId, taskId);
+      if (!data) {
+        console.warn("⚠️ Kein Board gefunden mit dieser ID.");
+        setBoard(null);
+        setLoading(false);
+        return;
+      }
+
+      setBoard(data);
+
+      // 🎯 2. Listen laden
+      await fetchLists();
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [id]);
+
+  // Listen + zugehörige Tasks laden
+  const fetchLists = async () => {
+    const { data, error } = await supabase
+      .from("lists")
+      .select("*, tasks(*)")
+      .eq("board_id", id)
+      .order("position", { ascending: true });
+
+    if (error) {
+      console.error("❌ Fehler beim Laden der Listen:", error.message);
+    } else {
+      setLists(data);
+    }
   };
+
+  useEffect(() => {
+    const testBoards = async () => {
+      const { data, error } = await supabase.from("boards").select("*");
+      console.log("Alle Boards:", data);
+    };
+
+    testBoards();
+  }, []);
+
+  if (loading) return <p className="p-6">🔄 Lade Board...</p>;
+  if (!board) return <p className="p-6 text-red-500">❌ Board nicht gefunden.</p>;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">📌 {board?.title}</h1>
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto">
-          {board?.lists.map((list) => (
-            <ListColumn key={list.id} list={list} boardId={board.id} />
-          ))}
-        </div>
-      </DndContext>
+      <h1 className="text-2xl font-bold mb-6">📌 {board.title}</h1>
+
+      <div className="flex gap-4 overflow-x-auto">
+        {lists.map((list) => (
+          <div
+            key={list.id}
+            className="bg-white rounded-xl shadow w-64 p-4 flex-shrink-0"
+          >
+            <h2 className="font-semibold text-lg mb-3">{list.title}</h2>
+
+            {/* Tasks anzeigen */}
+            <div className="flex flex-col gap-2 mb-2">
+              {list.tasks?.map((task) => (
+                <div
+                  key={task.id}
+                  className="bg-gray-100 p-3 rounded text-sm hover:bg-gray-200"
+                >
+                  {task.title}
+                </div>
+              ))}
+            </div>
+
+            {/* Neue Aufgabe */}
+            <AddTask listId={list.id} onTaskAdded={fetchLists} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
