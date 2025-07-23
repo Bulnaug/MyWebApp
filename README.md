@@ -17,3 +17,7 @@ Technologie-Stack:
         --State-Management - zustand (npm install zustand)--
     Drag & Drop - @dnd-kit/core (npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities)
     DatenBank - Supabase (https://supabase.com/, npm install @supabase/supabase-js)
+
+Funktialitat jetzt:
+    - Bord Ubersicht
+    - Neue Boards erstellen
