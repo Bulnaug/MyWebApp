@@ -21,3 +21,5 @@ Technologie-Stack:
 Funktialitat jetzt:
     - Bord Ubersicht
     - Neue Boards erstellen
+    - Neue Lists erstellen mit Boards Verknupfung
+    - Neue Tasks auf Lits erstellen
