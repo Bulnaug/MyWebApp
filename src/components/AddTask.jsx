@@ -12,7 +12,6 @@ export default function AddTask({ listId, onTaskAdded }) {
     const { error } = await supabase.from("tasks").insert({
       title,
       list_id: listId,
-      position: Date.now(), // primitive Sortierung
     });
 
     setLoading(false);
