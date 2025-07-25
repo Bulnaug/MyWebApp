@@ -42,6 +42,20 @@ export default function Dashboard() {
     setCreating(false);
   };
 
+  const deleteBoard = async (id) => {
+    const confirm = window.confirm("Möchtest du dieses Board wirklich löschen?");
+    if (!confirm) return;
+
+    const { error } = await supabase.from("boards").delete().eq("id", id);
+
+    if (error) {
+      console.error("Fehler beim Löschen:", error.message);
+    } else {
+      await fetchBoards(); // neu laden
+    }
+  };
+
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">📋 Deine Boards</h1>
@@ -72,14 +86,21 @@ export default function Dashboard() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {boards.map((board) => (
-            <Link
+            <div
               key={board.id}
-              to={`/board/${board.id}`}
-              className="block bg-white rounded-xl shadow p-4 hover:bg-gray-100 transition"
+              className="bg-white rounded-xl shadow p-4 flex flex-col justify-between hover:bg-gray-100 transition"
             >
-              <h2 className="text-lg font-semibold">{board.title}</h2>
-              <p className="text-sm text-gray-500 mt-1">{board.id}</p>
-            </Link>
+              <Link to={`/board/${board.id}`} className="flex-1">
+                <h2 className="text-lg font-semibold">{board.title}</h2>
+                <p className="text-sm text-gray-500 mt-1 break-all">{board.id}</p>
+              </Link>
+              <button
+                onClick={() => deleteBoard(board.id)}
+                className="mt-3 text-red-600 hover:text-red-800 text-sm self-start"
+              >
+                🗑️ Löschen
+              </button>
+            </div>
           ))}
         </div>
       )}
