@@ -23,3 +23,4 @@ Funktialitat jetzt:
     - Neue Boards erstellen
     - Neue Lists erstellen mit Boards Verknupfung
     - Neue Tasks auf Lits erstellen
+    - Drag and drop for Tasks
