@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import AddTask from "../components/AddTask";
+import TaskList from "../components/TaskList";
 
 export default function BoardPage() {
   const { id } = useParams(); // UUID aus URL
@@ -53,7 +54,7 @@ export default function BoardPage() {
       .from("lists")
       .select("*, tasks(*)")
       .eq("board_id", id)
-      .order("position", { ascending: true });
+      .order("order", { ascending: true });
 
     if (error) {
       console.error("❌ Fehler beim Laden der Listen:", error.message);
@@ -88,6 +89,25 @@ export default function BoardPage() {
     setCreating(false);
   };
 
+  const handleTaskReorder = async (listId, newOrder) => {
+  const updates = newOrder.map((task, index) => ({
+    id: task.id,
+    order: index,
+  }));
+
+  // Optional: Update Supabase
+  for (const update of updates) {
+    await supabase.from("tasks").update({ order: update.order }).eq("id", update.id);
+  }
+
+  // Danach: State aktualisieren, damit UI stimmt
+  setLists((prev) =>
+    prev.map((list) =>
+      list.id === listId ? { ...list, tasks: newOrder } : list
+    )
+  );
+};
+
   if (loading) return <p className="p-6">🔄 Lade Board...</p>;
   if (!board) return <p className="p-6 text-red-500">❌ Board nicht gefunden.</p>;
 
@@ -104,16 +124,11 @@ export default function BoardPage() {
             <h2 className="font-semibold text-lg mb-3">{list.title}</h2>
 
             {/* Tasks anzeigen */}
-            <div className="flex flex-col gap-2 mb-2">
-              {list.tasks?.map((task) => (
-                <div
-                  key={task.id}
-                  className="bg-gray-100 p-3 rounded text-sm hover:bg-gray-200"
-                >
-                  {task.title}
-                </div>
-              ))}
-            </div>
+            <TaskList
+              listId={list.id}
+              tasks={list.tasks}
+              onReorder={(newOrder) => handleTaskReorder(list.id, newOrder)}
+            />
 
             {/* Neue Aufgabe */}
             <AddTask listId={list.id} onTaskAdded={fetchLists} />
