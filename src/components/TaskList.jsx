@@ -12,9 +12,12 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+
 import { SortableItem } from "./SortableItem";
 
-export default function TaskList({ listId, tasks, onReorder }) {
+import DeleteTask from "./DeleteTask";
+
+export default function TaskList({ listId, tasks, onReorder, taskRemoved }) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -37,10 +40,12 @@ export default function TaskList({ listId, tasks, onReorder }) {
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+        
         <div className="flex flex-col gap-2">
           {tasks.map((task) => (
             <SortableItem key={task.id} id={task.id}>
-              <div className="bg-white p-3 rounded shadow">{task.title}</div>
+                <div className="bg-white p-3 rounded shadow">{task.title}</div>
+                <DeleteTask taskId={task.id} taskRemoved={taskRemoved} /> 
             </SortableItem>
           ))}
         </div>

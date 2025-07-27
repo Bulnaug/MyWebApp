@@ -10,8 +10,22 @@ export function SortableItem({ id, children }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="relative"
+    >
+      {/* Drag Handle */}
+      <div
+        {...listeners}
+        className="absolute top-1 left-1 text-gray-400 cursor-grab"
+        title="Ziehen"
+      >
+        ☰
+      </div>
+
+      <div className="pl-6">{children}</div>
     </div>
   );
 }

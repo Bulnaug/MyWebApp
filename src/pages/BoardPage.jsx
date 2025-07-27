@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabase";
 import AddTask from "../components/AddTask";
 import TaskList from "../components/TaskList";
 import AddList from "../components/AddList";
+import DeleteList from "../components/DeleteList";
 
 export default function BoardPage() {
   const { id } = useParams(); // UUID aus URL
@@ -107,12 +108,14 @@ export default function BoardPage() {
             className="bg-white rounded-xl shadow w-64 p-4 flex-shrink-0"
           >
             <h2 className="font-semibold text-lg mb-3">{list.title}</h2>
+            <DeleteList listId={list.id} listTasks={list.tasks} listRemoved={fetchLists} />
 
             {/* Tasks anzeigen */}
             <TaskList
               listId={list.id}
               tasks={list.tasks}
               onReorder={(newOrder) => handleTaskReorder(list.id, newOrder)}
+              taskRemoved={fetchLists}
             />
 
             {/* Neue Aufgabe */}
