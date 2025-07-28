@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-import AddTask from "../components/AddTask";
+import AddTask from "../components/tasks/AddTask";
 import TaskList from "../components/TaskList";
-import AddList from "../components/AddList";
-import DeleteList from "../components/DeleteList";
+import AddList from "../components/columns/AddList";
+import DeleteList from "../components/columns/DeleteList";
 
 export default function BoardPage() {
   const { id } = useParams(); // UUID aus URL
@@ -115,7 +115,7 @@ export default function BoardPage() {
               listId={list.id}
               tasks={list.tasks}
               onReorder={(newOrder) => handleTaskReorder(list.id, newOrder)}
-              taskRemoved={fetchLists}
+              taskModified={fetchLists}
             />
 
             {/* Neue Aufgabe */}

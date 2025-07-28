@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-import AddBoard from "../components/AddBord";
-import DeleteBoard from "../components/DeleteBoard";
+import AddBoard from "../components/boards/AddBord";
+import DeleteBoard from "../components/boards/DeleteBoard";
 
 export default function Dashboard() {
   const [boards, setBoards] = useState([]);
