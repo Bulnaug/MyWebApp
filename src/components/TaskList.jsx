@@ -18,7 +18,7 @@ import { SortableItem } from "./SortableItem";
 import DeleteTask from "./tasks/DeleteTask";
 import EditTask from "./tasks/EditTask";
 
-export default function TaskList({ listId, tasks, onReorder, taskModified }) {
+export default function TaskList({ listId, tasks, onTaskReorder, taskModified }) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -34,7 +34,7 @@ export default function TaskList({ listId, tasks, onReorder, taskModified }) {
       const newIndex = tasks.findIndex((t) => t.id === over?.id);
 
       const newOrder = arrayMove(tasks, oldIndex, newIndex);
-      onReorder(newOrder);
+      onTaskReorder(newOrder);
     }
   };
 

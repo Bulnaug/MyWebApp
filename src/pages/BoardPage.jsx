@@ -6,6 +6,7 @@ import AddTask from "../components/tasks/AddTask";
 import TaskList from "../components/TaskList";
 import AddList from "../components/columns/AddList";
 import DeleteList from "../components/columns/DeleteList";
+import ListList from "../components/ListList";
 
 export default function BoardPage() {
   const { id } = useParams(); // UUID aus URL
@@ -74,23 +75,39 @@ export default function BoardPage() {
   }, []);
 
   const handleTaskReorder = async (listId, newOrder) => {
-  const updates = newOrder.map((task, index) => ({
-    id: task.id,
-    order: index,
-  }));
+      const updates = newOrder.map((task, index) => ({
+        id: task.id,
+        order: index,
+      }));
+  
+      // Optional: Update Supabase
+      for (const update of updates) {
+        await supabase.from("tasks").update({ order: update.order }).eq("id", update.id);
+      }
+  
+      // Danach: State aktualisieren, damit UI stimmt
+      setLists((prev) =>
+        prev.map((list) =>
+          list.id === listId ? { ...list, tasks: newOrder } : list
+        )
+      );
+    };
 
-  // Optional: Update Supabase
-  for (const update of updates) {
-    await supabase.from("tasks").update({ order: update.order }).eq("id", update.id);
-  }
+    const handleListReorder = async (boardId, newOrder) => {
+      const updates = newOrder.map((lists, index) => ({
+        id: lists.id,
+        order: index,
+      }));
+  
+      // Optional: Update Supabase
+      for (const update of updates) {
+        await supabase.from("lists").update({ order: update.order }).eq("id", update.id);
+      }
+  
+      // Danach: State aktualisieren, damit UI stimmt
+      fetchLists()
+    };
 
-  // Danach: State aktualisieren, damit UI stimmt
-  setLists((prev) =>
-    prev.map((list) =>
-      list.id === listId ? { ...list, tasks: newOrder } : list
-    )
-  );
-};
 
   if (loading) return <p className="p-6">🔄 Lade Board...</p>;
   if (!board) return <p className="p-6 text-red-500">❌ Board nicht gefunden.</p>;
@@ -101,7 +118,7 @@ export default function BoardPage() {
       <h1 className="text-2xl font-bold mb-6">📌 {board.title}</h1>
       <AddList onListAdded={fetchLists} />
 
-      <div className="flex gap-4 overflow-x-auto">
+      {/* <div className="flex gap-4 overflow-x-auto">
         {lists.map((list) => (
           <div
             key={list.id}
@@ -110,7 +127,7 @@ export default function BoardPage() {
             <h2 className="font-semibold text-lg mb-3">{list.title}</h2>
             <DeleteList listId={list.id} listTasks={list.tasks} listRemoved={fetchLists} />
 
-            {/* Tasks anzeigen */}
+            
             <TaskList
               listId={list.id}
               tasks={list.tasks}
@@ -118,11 +135,17 @@ export default function BoardPage() {
               taskModified={fetchLists}
             />
 
-            {/* Neue Aufgabe */}
+            
             <AddTask listId={list.id} onTaskAdded={fetchLists} />
           </div>
         ))}
-      </div>
+      </div> */}
+      <ListList 
+        fetchLists={fetchLists} 
+        lists={lists} 
+        handleTaskReorder={handleTaskReorder}
+        onListReorder={(newOrder) => handleListReorder(board.id, newOrder)}
+      />
     </div>
   );
 }
