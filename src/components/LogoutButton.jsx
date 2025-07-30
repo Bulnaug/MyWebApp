@@ -1,12 +1,12 @@
-import { supabase } from "../supabaseClient";
+import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 
-function LogoutButton() {
+export default function  LogoutButton() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate("/");
   };
 
   return <button onClick={handleLogout} className="text-sm text-red-500">Logout</button>;
